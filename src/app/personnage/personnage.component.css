@@ -1,0 +1,31 @@
+.card_Personnages{   
+    margin-left: 2%;
+    margin-right: 2%;
+    margin-top: 1%;
+}
+
+table {
+    width: 100%;
+  }
+  
+  .rowInput{
+    font-size: 14px;
+    width: 100%;
+  }
+
+.formPersonnage{
+  margin-top: 25px;
+}
+
+.formPersonnage > mat-form-field{
+  margin-right: 25px;
+}
+
+.center{
+  text-align: center;
+}
+
+.btnAction > button{
+  margin-top: 10px;
+  margin-right: 25px;
+}

@@ -3,6 +3,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import { ArmeType } from '../class/arme_type/arme-type';
 import { Personnage } from '../class/personnage/personnage';
 
 @Component({
@@ -12,24 +13,23 @@ import { Personnage } from '../class/personnage/personnage';
 })
 export class PersonnageComponent implements OnInit {
 
-  displayedColumns: string[] = ['id', 'op_nom', 'int_nom', 'libelle', 'statut', 'dt_debut', 'dt_fin', 'prc_execution'];
+  displayedColumns: string[] = ['id', 'nom', 'rarete', 'image', 'arme_type_id', 'element_id'];
   dataSource: MatTableDataSource<Personnage>;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
   tabPersonnage: Array<Personnage>;
-  // tabOperations: Array<Operations>;
-  // tabIntervenants: Array<Intervenants>;
+  tabArmeType: Array<ArmeType>;
+  tabElement: Array<Element>;
+  
   Personnage: Personnage;
   inputId: number;
-  inputLibelle : string;
-  inputStatut : string;
-  inputDtDeb : Date;
-  inputDtFin : Date;
-  inputPcrExe :number;
-  selectOp: number = null;
-  selectInt: number = null;
+  inputNom : string;
+  inputRarete : number;
+  inputImage : string;
+  selectArmeType : ArmeType;
+  selectElement : Element;
   radioButton: boolean;
 
   constructor(private http: HttpClient) { }
@@ -39,24 +39,23 @@ export class PersonnageComponent implements OnInit {
 
     const httpOptions = {
       headers: new HttpHeaders({
-        'Content-Type': 'application/json; charset=utf-8'
+        'Content-Type': 'application/json'
       })
     };
 
-    this.http.get<any>('http://127.0.0.1:8000/api/personnages',httpOptions).subscribe(
+    this.http.get<Personnage[]>('http://127.0.0.1:8000/api/personnages',httpOptions).subscribe(
       jsonData => {
         if (jsonData) {
-          console.log(jsonData);
-          // for (const unPersonnage of jsonData) {
-          //   this.Personnage = new Personnage();
-          //   // this.Personnage.id = unPersonnage.id;
-          //   // this.Personnage.op_nom = unPersonnage.op_nom;
-          //   // this.Personnage.int_nom = unPersonnage.int_nom;
-          //   this.tabPersonnage.push(this.Personnage);
-          //   this.dataSource = new MatTableDataSource(this.tabPersonnage);
-          //   this.refreach();
-          //   this.radioButton = false;
-          // }
+          for (const unPersonnage of jsonData) {
+            this.Personnage = unPersonnage;
+            // this.Personnage.id = unPersonnage.id;
+            // this.Personnage.op_nom = unPersonnage.op_nom;
+            // this.Personnage.int_nom = unPersonnage.int_nom;
+            this.tabPersonnage.push(this.Personnage);
+            this.dataSource = new MatTableDataSource(this.tabPersonnage);
+            this.refreach();
+            this.radioButton = false;
+          }
         }
       }
     );
@@ -64,14 +63,14 @@ export class PersonnageComponent implements OnInit {
     // Assign the data to the data source for the table to render
     this.dataSource = new MatTableDataSource(this.tabPersonnage);
     this.radioButton = false;
-    // this.getAllOperation();
-    // this.getAllIntervenant();
+    this.getArmeType();
+    this.getElement();
   }
 
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
-    // this.paginator._intl.itemsPerPageLabel = 'Nombre de ligne par page:';
+    this.paginator._intl.itemsPerPageLabel = 'Nombre de ligne par page:';
   }
 
   applyFilter(event: Event) {
@@ -85,13 +84,11 @@ export class PersonnageComponent implements OnInit {
 
   public refreach() {
     this.inputId = null;
-    this.inputLibelle = null;
-    this.inputStatut = null;
-    this.inputDtDeb = null;
-    this.inputDtFin = null;
-    this.inputPcrExe = null;
-    this.selectOp = null;
-    this.selectInt = null;
+    this.inputNom = null;
+    this.inputRarete = null;
+    this.inputImage = null;
+    this.selectArmeType = null;
+    this.selectElement = null;
     this.Personnage = null;
     this.radioButton = false;
     this.ngAfterViewInit();
@@ -99,14 +96,12 @@ export class PersonnageComponent implements OnInit {
 
   public selectPersonnage(unPersonnage: Personnage) {
     this.Personnage = unPersonnage;
-    // this.inputId = unPersonnage.id;
-    // this.inputLibelle = unPersonnage.libelle;
-    // this.inputStatut = unPersonnage.statut;
-    // this.inputDtDeb = unPersonnage.dt_debut;
-    // this.inputDtFin = unPersonnage.dt_fin;
-    // this.inputPcrExe = unPersonnage.prc_execution;
-    // this.selectOp =  unPersonnage.ref_operation;
-    // this.selectInt = unPersonnage.ref_intervenant;
+    this.inputId = unPersonnage.personnage_id;
+    this.inputNom = unPersonnage.nom;
+    this.inputRarete = unPersonnage.rarete;
+    this.inputImage = unPersonnage.image;
+    this.selectArmeType = unPersonnage.arme_type_id;
+    this.selectElement = unPersonnage.element_id;
   }
 
   public insertPersonnage() {
@@ -134,13 +129,11 @@ export class PersonnageComponent implements OnInit {
       })
     };
 
-    // this.Personnage.libelle = this.inputLibelle;
-    // this.Personnage.statut = this.inputStatut;
-    // this.Personnage.dt_debut = this.inputDtDeb;
-    // this.Personnage.dt_fin = this.inputDtFin;
-    // this.Personnage.prc_execution = this.inputPcrExe;
-    // this.Personnage.ref_operation = this.selectOp;
-    // this.Personnage.ref_intervenant = this.selectInt;
+    this.Personnage.nom = this.inputNom;
+    this.Personnage.rarete = this.inputRarete;
+    this.Personnage.image = this.inputImage;
+    this.Personnage.arme_type_id = this.selectArmeType;
+    this.Personnage.element_id = this.selectElement;
 
     this.http.post<any>('http://localhost/API_REST/index.php?section=Personnage&action=maj', this.Personnage, httpOptions).subscribe(
       jsonData => {
@@ -165,25 +158,38 @@ export class PersonnageComponent implements OnInit {
     );
   }
 
-  // public getAllOperation() {
-  //   this.http.post<Operations[]>('http://localhost/API_REST/index.php?section=operations&action=getAll', null).subscribe(
-  //     jsonData => {
-  //       if (jsonData) {
-  //         this.tabOperations = jsonData;
-  //       }
-  //     }
-  //   );
-  // }
+  public getArmeType() {
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json'
+      })
+    };
 
-  // public getAllIntervenant() {
-  //   this.http.post<Intervenants[]>('http://localhost/API_REST/index.php?section=intervenants&action=getAll', null).subscribe(
-  //     jsonData => {
-  //       if (jsonData) {
-  //         this.tabIntervenants = jsonData;
-  //       }
-  //     }
-  //   );
-  // }
+    this.http.get<ArmeType[]>('http://127.0.0.1:8000/api/arme_types', httpOptions).subscribe(
+      jsonData => {
+        if (jsonData) {
+          this.tabArmeType = jsonData;
+        }
+      }
+    );
+  }
+
+  public getElement() {
+    
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json'
+      })
+    };
+
+    this.http.get<Element[]>('http://127.0.0.1:8000/api/elements', httpOptions).subscribe(
+      jsonData => {
+        if (jsonData) {
+          this.tabElement = jsonData;
+        }
+      }
+    );
+  }
 
   _compareFn(a,b) {
     let result = false;

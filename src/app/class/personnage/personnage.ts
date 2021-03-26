@@ -1,10 +1,12 @@
+import { ArmeType } from "../arme_type/arme-type";
+
 export class Personnage {
     private _personnage_id: number;
     private _nom: string;
     private _rarete: number;
     private _image: string;
-    private _arme_type_id: number;
-    private _element_id: number;
+    private _arme_type_id: ArmeType;
+    private _element_id: Element;
 
     constructor(){}
     
@@ -33,16 +35,16 @@ export class Personnage {
     public set image(value: string) {
         this._image = value;
     }
-    public get arme_type_id(): number {
+    public get arme_type_id(): ArmeType {
         return this._arme_type_id;
     }
-    public set arme_type_id(value: number) {
+    public set arme_type_id(value: ArmeType) {
         this._arme_type_id = value;
     }
-    public get element_id(): number {
+    public get element_id(): Element {
         return this._element_id;
     }
-    public set element_id(value: number) {
+    public set element_id(value: Element) {
         this._element_id = value;
     }
 }

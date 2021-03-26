@@ -52,6 +52,7 @@ import { PersonnageComponent } from './personnage/personnage.component';
     MatRadioModule,
     MatSelectModule,
     MatTabsModule,
+    FormsModule
 
   ],
   providers: [],
