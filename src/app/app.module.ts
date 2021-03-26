@@ -12,11 +12,13 @@ import {MatButtonModule} from '@angular/material/button';
 import { AccueilComponent } from './accueil/accueil.component';
 import {MatCardModule} from '@angular/material/card';
 import {MatExpansionModule} from '@angular/material/expansion';
+import { ObjetsComponent } from './objets/objets.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    AccueilComponent
+    AccueilComponent,
+    ObjetsComponent
   ],
   imports: [
     BrowserModule,

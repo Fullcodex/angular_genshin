@@ -7,7 +7,7 @@ import {MediaMatcher} from '@angular/cdk/layout';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'angular-tab-squelette';
+  title = 'Genshin Stat';
 
   mobileQuery: MediaQueryList;
 
