@@ -3,14 +3,14 @@
     <button mat-icon-button (click)="snav.toggle()">
       <mat-icon>menu</mat-icon>
     </button>
-    <h1 class="app-name">Angular Dashbord Squelette</h1>
+    <h1 class="app-name">Genshin Stat</h1>
   </mat-toolbar>
 
   <mat-sidenav-container class="sidenav-container">
     <mat-sidenav class="sidenav" #snav [mode]="mobileQuery.matches ? 'over' : 'side'" [fixedInViewport]="mobileQuery.matches" fixedTopGap="56">
       <mat-nav-list>
         <a mat-list-item routerLink=""><mat-icon class="nav-icon">home</mat-icon>Accueil</a>
-        <a mat-list-item routerLink="">Objets</a>
+        <a mat-list-item routerLink="">Personnages</a>
         <a mat-list-item routerLink="." *ngFor="let nav of fillerNav">{{nav}}</a>
       </mat-nav-list>
     </mat-sidenav>
