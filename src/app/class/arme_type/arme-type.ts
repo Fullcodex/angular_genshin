@@ -10,7 +10,6 @@ export class ArmeType {
     public set armeTypeId(value: number) {
         this._armeTypeId = value;
     }
-    
     public get labelType(): string {
         return this._labelType;
     }

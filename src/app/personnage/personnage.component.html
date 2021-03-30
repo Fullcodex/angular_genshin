@@ -41,13 +41,13 @@
                 <!-- Colonne Type Arme -->
                 <ng-container matColumnDef="arme_type_id">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header> Type d'arme </th>
-                    <td mat-cell *matCellDef="let row"> {{row.arme_type_id}} </td>
+                    <td mat-cell *matCellDef="let row"> {{row.armeType.labelType}} </td>
                 </ng-container>
 
                 <!-- Colonne Element -->
                 <ng-container matColumnDef="element_id">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header> Element </th>
-                    <td mat-cell *matCellDef="let row"> {{row.element_id}} </td>
+                    <td mat-cell *matCellDef="let row"> {{row.element.label}} </td>
                 </ng-container>
 
                 <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
@@ -70,8 +70,8 @@
             <mat-form-field appearance="fill">
                 <mat-label>Rarete</mat-label>
                 <mat-select [(ngModel)]="inputRarete" [compareWith]="_compareFn">
-                    <mat-option value="4">4</mat-option>
-                    <mat-option value="5">5</mat-option>
+                    <mat-option value=4>4</mat-option>
+                    <mat-option value=5>5</mat-option>
                 </mat-select>
             </mat-form-field>
             <mat-form-field appearance="fill">
@@ -80,15 +80,15 @@
             </mat-form-field>
             <mat-form-field appearance="fill">
                 <mat-label>Type arme</mat-label>
-                <mat-select [(ngModel)]="selectArmeType" [compareWith]="_compareFn">
-                    <mat-option *ngFor="let unTypeArme of tabArmeType" value="{{unTypeArme.armeTypeId}}">
+                <mat-select [(ngModel)]="selectArmeType" [compareWith]="_compareArmeType">
+                    <mat-option *ngFor="let unTypeArme of tabArmeType" [value]="unTypeArme">
                         {{unTypeArme.labelType}}</mat-option>
                 </mat-select>
             </mat-form-field>
             <mat-form-field appearance="fill">
                 <mat-label>Element</mat-label>
-                <mat-select [(ngModel)]="selectElement" [compareWith]="_compareFn">
-                    <mat-option *ngFor="let unElement of tabElement" value="{{unElement.element_id}}">
+                <mat-select [(ngModel)]="selectElement" [compareWith]="_compareElement">
+                    <mat-option *ngFor="let unElement of tabElement" [value]="unElement">
                         {{unElement.label}}</mat-option>
                 </mat-select>
             </mat-form-field>

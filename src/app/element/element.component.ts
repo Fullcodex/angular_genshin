@@ -17,12 +17,12 @@ export class ElementComponent implements OnInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
-  tabElement : Array<Element>;
+  tabElement: Array<Element>;
 
 
   Element: Element;
   inputId: number;
-  inputLabel : string;
+  inputLabel: string;
   radioButton: boolean;
 
   constructor(private http: HttpClient) { }
@@ -32,22 +32,22 @@ export class ElementComponent implements OnInit {
     this.tabElement = Array<Element>();
     const httpOptions = {
       headers: new HttpHeaders({
-        
+
         'Content-Type': 'application/json'
-        
+
       })
     };
 
-    this.http.get<Element[]>('https://localhost:44378/api/Elements',httpOptions).subscribe(
+    this.http.get<Element[]>('https://localhost:44378/api/Elements', httpOptions).subscribe(
       jsonData => {
         if (jsonData) {
           for (const unElement of jsonData) {
             this.Element = unElement;
-         
+
             this.tabElement.push(this.Element);
             this.dataSource = new MatTableDataSource(this.tabElement);
             this.refreach();
-            
+
           }
         }
       }
@@ -69,7 +69,7 @@ export class ElementComponent implements OnInit {
 
   public refreach() {
     this.inputId = null;
-    this.inputLabel= null;
+    this.inputLabel = null;
     this.radioButton = false;
     this.ngAfterViewInit();
   }
@@ -78,8 +78,8 @@ export class ElementComponent implements OnInit {
     this.Element = unElement;
     this.inputId = unElement.elementId
     this.inputLabel = unElement.label;
-    
-    
+
+
   }
 
   ngAfterViewInit() {
@@ -95,19 +95,18 @@ export class ElementComponent implements OnInit {
       })
     };
 
+    this.Element.label = this.inputLabel;
 
-        this.Element.label = this.inputLabel;
-    
-        this.http.put<any>('https://localhost:44378/api/Elements/6', this.Element, httpOptions).subscribe(
-          jsonData => {
-            this.refreach();
-            this.ngOnInit();
-            
-          }
-        );
+    this.http.put<any>('https://localhost:44378/api/Elements/' + this.Element.elementId, this.Element, httpOptions).subscribe(
+      jsonData => {
+        this.refreach();
+        this.ngOnInit();
 
-    
-    
+      }
+    );
+
+
+
   }
 
   public insertElement() {
@@ -117,11 +116,7 @@ export class ElementComponent implements OnInit {
       })
     };
 
-    
-   
-   
-
-    this.http.post<any>('https://localhost:44378/api/Elements', {label: this.inputLabel}, httpOptions).subscribe(
+    this.http.post<any>('https://localhost:44378/api/Elements', { label: this.inputLabel }, httpOptions).subscribe(
       jsonData => {
         this.refreach();
         this.ngOnInit();
@@ -136,8 +131,7 @@ export class ElementComponent implements OnInit {
       })
     };
 
-    
-    this.http.delete<any>('https://localhost:44378/api/Elements/'+this.Element.elementId,httpOptions).subscribe(
+    this.http.delete<any>('https://localhost:44378/api/Elements/' + this.Element.elementId, httpOptions).subscribe(
       jsonData => {
         this.tabElement.splice(this.tabElement.indexOf(this.Element));
         this.refreach();
@@ -145,10 +139,10 @@ export class ElementComponent implements OnInit {
     );
   }
 
-  _compareFn(a,b) {
+  _compareFn(a, b) {
     let result = false;
-    if(a && b){
-      if(a == b){
+    if (a && b) {
+      if (a == b) {
         result = true;
       }
     }

@@ -5,6 +5,7 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { ArmeType } from '../class/arme_type/arme-type';
 import { Personnage } from '../class/personnage/personnage';
+import { Element } from '../class/element/element';
 
 @Component({
   selector: 'app-personnage',
@@ -22,14 +23,14 @@ export class PersonnageComponent implements OnInit {
   tabPersonnage: Array<Personnage>;
   tabArmeType: Array<ArmeType>;
   tabElement: Array<Element>;
-  
+
   Personnage: Personnage;
   inputId: number;
-  inputNom : string;
-  inputRarete : number;
-  inputImage : string;
-  selectArmeType : ArmeType;
-  selectElement : Element;
+  inputNom: string;
+  inputRarete: number;
+  inputImage: string;
+  selectArmeType: ArmeType;
+  selectElement: Element;
   radioButton: boolean;
 
   constructor(private http: HttpClient) { }
@@ -43,12 +44,11 @@ export class PersonnageComponent implements OnInit {
       })
     };
 
-    this.http.get<Personnage[]>('http://127.0.0.1:8000/api/personnages',httpOptions).subscribe(
+    this.http.get<Personnage[]>('http://127.0.0.1:8000/api/personnages', httpOptions).subscribe(
       jsonData => {
         if (jsonData) {
           for (const unPersonnage of jsonData) {
             this.Personnage = unPersonnage;
-            // this.Personnage.id = unPersonnage.id;
             // this.Personnage.op_nom = unPersonnage.op_nom;
             // this.Personnage.int_nom = unPersonnage.int_nom;
             this.tabPersonnage.push(this.Personnage);
@@ -96,12 +96,12 @@ export class PersonnageComponent implements OnInit {
 
   public selectPersonnage(unPersonnage: Personnage) {
     this.Personnage = unPersonnage;
-    this.inputId = unPersonnage.personnage_id;
+    this.inputId = unPersonnage.personnageId;
     this.inputNom = unPersonnage.nom;
     this.inputRarete = unPersonnage.rarete;
     this.inputImage = unPersonnage.image;
-    this.selectArmeType = unPersonnage.arme_type_id;
-    this.selectElement = unPersonnage.element_id;
+    this.selectArmeType = unPersonnage.armeType;
+    this.selectElement = unPersonnage.element;
   }
 
   public insertPersonnage() {
@@ -111,10 +111,31 @@ export class PersonnageComponent implements OnInit {
       })
     };
 
-    this.Personnage = new Personnage();
-    this.http.post<any[]>('http://localhost/API_REST/index.php?section=Personnage&action=insert', this.Personnage, httpOptions).subscribe(
+    // let tab = {
+    //   nom: this.inputNom,
+    //   rarete: Number(this.inputRarete),
+    //   image: this.inputImage,
+    //   armeType: {
+    //     armeTypeId: this.selectArmeType.armeTypeId,
+    //     labelType: this.selectArmeType.labelType
+    //   },
+    //   element: {
+    //     elementId: this.selectElement.elementId,
+    //     label: this.selectElement.label
+    //   }
+    // };
+
+    let tab = {
+      nom: this.inputNom,
+      rarete: Number(this.inputRarete),
+      image: this.inputImage,
+      armeType: '/api/arme_types/' + this.selectArmeType.armeTypeId,
+      element: '/api/elements/' + this.selectElement.elementId
+    };
+
+    this.http.post<Personnage>('http://127.0.0.1:8000/api/personnages', tab, httpOptions).subscribe(
       jsonData => {
-        if (jsonData['_id'].id) {
+        if (jsonData.personnageId) {
           this.refreach();
           this.ngOnInit();
         }
@@ -129,16 +150,20 @@ export class PersonnageComponent implements OnInit {
       })
     };
 
-    this.Personnage.nom = this.inputNom;
-    this.Personnage.rarete = this.inputRarete;
-    this.Personnage.image = this.inputImage;
-    this.Personnage.arme_type_id = this.selectArmeType;
-    this.Personnage.element_id = this.selectElement;
+    let tab = {
+      nom: this.inputNom,
+      rarete: Number(this.inputRarete),
+      image: this.inputImage,
+      armeType: '/api/arme_types/' + this.selectArmeType.armeTypeId,
+      element: '/api/elements/' + this.selectElement.elementId
+    };
 
-    this.http.post<any>('http://localhost/API_REST/index.php?section=Personnage&action=maj', this.Personnage, httpOptions).subscribe(
+    this.http.put<Personnage>('http://127.0.0.1:8000/api/personnages/'+this.Personnage.personnageId, tab, httpOptions).subscribe(
       jsonData => {
-        this.refreach();
-        this.ngOnInit();
+        if(jsonData.personnageId){
+          this.refreach();
+          this.ngOnInit();
+        }
       }
     );
   }
@@ -150,10 +175,14 @@ export class PersonnageComponent implements OnInit {
       })
     };
 
-    this.http.post<any>('http://localhost/API_REST/index.php?section=Personnage&action=del', this.Personnage, httpOptions).subscribe(
+    console.log(this.Personnage);
+
+    this.http.delete<Personnage>('http://127.0.0.1:8000/api/personnages/' + this.Personnage.personnageId, httpOptions).subscribe(
       jsonData => {
-        this.tabPersonnage.splice(this.tabPersonnage.indexOf(this.Personnage));
-        this.refreach();
+        if (jsonData == null) {
+          this.refreach();
+          this.ngOnInit();
+        }
       }
     );
   }
@@ -175,7 +204,6 @@ export class PersonnageComponent implements OnInit {
   }
 
   public getElement() {
-    
     const httpOptions = {
       headers: new HttpHeaders({
         'Content-Type': 'application/json'
@@ -191,14 +219,30 @@ export class PersonnageComponent implements OnInit {
     );
   }
 
-  _compareFn(a,b) {
+  _compareFn(a, b) {
     let result = false;
-    if(a && b){
-      if(a == b){
+    if (a && b) {
+      if (a == b) {
         result = true;
       }
     }
     return result;
+  }
+
+  _compareArmeType(a, b) {
+    if (a && b) {
+      return a.armeTypeId === b.armeTypeId;
+    } else {
+      return false;
+    }
+  }
+
+  _compareElement(a, b) {
+    if (a && b) {
+      return a.elementId === b.elementId;
+    } else {
+      return false;
+    }
   }
 
 
