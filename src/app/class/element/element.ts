@@ -1,14 +1,14 @@
 export class Element {
-    private _element_id: number;
+    private _elementId: number;
     private _label: string;
     
     constructor(){}
 
-    public get element_id(): number {
-        return this._element_id;
+    public get elementId(): number {
+        return this._elementId;
     }
-    public set element_id(value: number) {
-        this._element_id = value;
+    public set elementId(value: number) {
+        this._elementId = value;
     }
     public get label(): string {
         return this._label;

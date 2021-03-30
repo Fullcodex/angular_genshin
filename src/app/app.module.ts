@@ -24,12 +24,14 @@ import {MatSelectModule} from '@angular/material/select';
 import {MatTabsModule} from '@angular/material/tabs';
 import {BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { PersonnageComponent } from './personnage/personnage.component';
+import { ElementComponent } from './element/element.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     AccueilComponent,
-    PersonnageComponent
+    PersonnageComponent,
+    ElementComponent
   ],
   imports: [
     BrowserModule,
