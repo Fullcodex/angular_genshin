@@ -4,9 +4,11 @@ import { AccueilComponent } from './accueil/accueil.component';
 import { ElementComponent } from './element/element.component';
 import { PersonnageComponent } from './personnage/personnage.component';
 
+const url = 'http://127.0.0.1:8000/api/';
+
 const routes: Routes = [
   { path: '', component: AccueilComponent },
-  { path: 'personnage', component: PersonnageComponent },
+  { path: 'personnage', component: PersonnageComponent, data:{uneUrl:url} },
   { path: 'element', component: ElementComponent },
 ];
 

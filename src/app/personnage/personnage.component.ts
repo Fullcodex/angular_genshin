@@ -1,5 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -14,6 +15,7 @@ import { Element } from '../class/element/element';
 })
 export class PersonnageComponent implements OnInit {
 
+  url: string;
   displayedColumns: string[] = ['id', 'nom', 'rarete', 'image', 'arme_type_id', 'element_id'];
   dataSource: MatTableDataSource<Personnage>;
 
@@ -33,38 +35,39 @@ export class PersonnageComponent implements OnInit {
   selectElement: Element;
   radioButton: boolean;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private activatedroute: ActivatedRoute) { }
 
   ngOnInit(): void {
-    this.tabPersonnage = Array<Personnage>();
+    this.activatedroute.data.subscribe(data => {
+      this.url = data.uneUrl;
+      this.tabPersonnage = Array<Personnage>();
 
-    const httpOptions = {
-      headers: new HttpHeaders({
-        'Content-Type': 'application/json'
-      })
-    };
+      const httpOptions = {
+        headers: new HttpHeaders({
+          'Content-Type': 'application/json'
+        })
+      };
 
-    this.http.get<Personnage[]>('http://127.0.0.1:8000/api/personnages', httpOptions).subscribe(
-      jsonData => {
-        if (jsonData) {
-          for (const unPersonnage of jsonData) {
-            this.Personnage = unPersonnage;
-            // this.Personnage.op_nom = unPersonnage.op_nom;
-            // this.Personnage.int_nom = unPersonnage.int_nom;
-            this.tabPersonnage.push(this.Personnage);
-            this.dataSource = new MatTableDataSource(this.tabPersonnage);
-            this.refreach();
-            this.radioButton = false;
+      this.http.get<Personnage[]>(this.url + 'personnages', httpOptions).subscribe(
+        jsonData => {
+          if (jsonData) {
+            for (const unPersonnage of jsonData) {
+              this.Personnage = unPersonnage;
+              this.tabPersonnage.push(this.Personnage);
+              this.dataSource = new MatTableDataSource(this.tabPersonnage);
+              this.refreach();
+              this.radioButton = false;
+            }
           }
         }
-      }
-    );
+      );
 
-    // Assign the data to the data source for the table to render
-    this.dataSource = new MatTableDataSource(this.tabPersonnage);
-    this.radioButton = false;
-    this.getArmeType();
-    this.getElement();
+      // Assign the data to the data source for the table to render
+      this.dataSource = new MatTableDataSource(this.tabPersonnage);
+      this.radioButton = false;
+      this.getArmeType();
+      this.getElement();
+    })
   }
 
   ngAfterViewInit() {
@@ -133,7 +136,7 @@ export class PersonnageComponent implements OnInit {
       element: '/api/elements/' + this.selectElement.elementId
     };
 
-    this.http.post<Personnage>('http://127.0.0.1:8000/api/personnages', tab, httpOptions).subscribe(
+    this.http.post<Personnage>(this.url + 'personnages', tab, httpOptions).subscribe(
       jsonData => {
         if (jsonData.personnageId) {
           this.refreach();
@@ -158,9 +161,9 @@ export class PersonnageComponent implements OnInit {
       element: '/api/elements/' + this.selectElement.elementId
     };
 
-    this.http.put<Personnage>('http://127.0.0.1:8000/api/personnages/'+this.Personnage.personnageId, tab, httpOptions).subscribe(
+    this.http.put<Personnage>(this.url + 'personnages/' + this.Personnage.personnageId, tab, httpOptions).subscribe(
       jsonData => {
-        if(jsonData.personnageId){
+        if (jsonData.personnageId) {
           this.refreach();
           this.ngOnInit();
         }
@@ -177,7 +180,7 @@ export class PersonnageComponent implements OnInit {
 
     console.log(this.Personnage);
 
-    this.http.delete<Personnage>('http://127.0.0.1:8000/api/personnages/' + this.Personnage.personnageId, httpOptions).subscribe(
+    this.http.delete<Personnage>(this.url + 'personnages/' + this.Personnage.personnageId, httpOptions).subscribe(
       jsonData => {
         if (jsonData == null) {
           this.refreach();
@@ -194,7 +197,7 @@ export class PersonnageComponent implements OnInit {
       })
     };
 
-    this.http.get<ArmeType[]>('http://127.0.0.1:8000/api/arme_types', httpOptions).subscribe(
+    this.http.get<ArmeType[]>(this.url + 'arme_types', httpOptions).subscribe(
       jsonData => {
         if (jsonData) {
           this.tabArmeType = jsonData;
@@ -210,7 +213,7 @@ export class PersonnageComponent implements OnInit {
       })
     };
 
-    this.http.get<Element[]>('http://127.0.0.1:8000/api/elements', httpOptions).subscribe(
+    this.http.get<Element[]>(this.url + 'elements', httpOptions).subscribe(
       jsonData => {
         if (jsonData) {
           this.tabElement = jsonData;
